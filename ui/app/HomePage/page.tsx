@@ -11,6 +11,7 @@ const HomePage: React.FC = () => {
   const [smallImageUrl, setSmallImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -55,6 +56,14 @@ const HomePage: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -102,14 +111,20 @@ const HomePage: React.FC = () => {
         {/* Error Handling */}
         {error && <p className="mt-4 text-red-500">{error}</p>}
 
-        {/* Image Display */}
+        {/* Image Display with Enhanced 3D Hover Effect */}
         {originalImageUrl && (
-          <div className="relative mt-8 h-60 md:h-96 w-full rounded-lg overflow-hidden shadow-lg">
+          <div
+            className="relative mt-8 h-60 md:h-96 w-full rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl hover:translate-y-[-10px] cursor-pointer"
+            onClick={openModal}
+            style={{
+              perspective: "1000px", // Creates a 3D perspective for depth effect
+            }}
+          >
             <Image
               src={originalImageUrl}
               alt="Generated Art"
               layout="fill"
-              className="object-cover rounded-lg transform transition-transform duration-300 hover:scale-105"
+              className="object-cover rounded-lg transform transition-transform duration-500 ease-out hover:scale-110"
             />
           </div>
         )}
@@ -135,6 +150,31 @@ const HomePage: React.FC = () => {
             >
               Download Small
             </button>
+          </div>
+        )}
+
+        {/* Modal for Original Image View */}
+        {showModal && originalImageUrl && (
+          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="relative max-w-4xl w-full mx-4">
+              <div className="absolute top-4 right-4">
+                <button
+                  onClick={closeModal}
+                  className="text-white text-2xl font-bold hover:text-gray-400"
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="w-full h-auto rounded-lg overflow-hidden">
+                <Image
+                  src={originalImageUrl}
+                  alt="Original Image"
+                  width={1200}
+                  height={800}
+                  className="object-contain rounded-lg"
+                />
+              </div>
+            </div>
           </div>
         )}
       </div>
