@@ -1,7 +1,4 @@
-"use client";
-
 import React, { useState } from "react";
-import Image from "next/image";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const HomePage: React.FC = () => {
@@ -17,8 +14,8 @@ const HomePage: React.FC = () => {
     setInputValue(event.target.value);
   };
 
-  // const backendAPI = "http://localhost:4000/api/v1/GenerateArt";
-  const backendAPI = "https://vrika-ai-production-8flg.vercel.app/api/v1/GenerateArt";
+  const backendAPI = "http://localhost:4000/api/v1/GenerateArt";
+  // const backendAPI = "https://vrika-ai-production-8flg.vercel.app/api/v1/GenerateArt";
 
   const handleGenerateArt = async () => {
     setLoading(true);
@@ -68,6 +65,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex items-center justify-center">
+      <img src="" alt="" />
       <div className="text-white text-center p-6 md:p-10 w-full max-w-screen-lg mx-auto space-y-8">
         {/* Hero Section */}
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
@@ -120,11 +118,10 @@ const HomePage: React.FC = () => {
               perspective: "1000px", // Creates a 3D perspective for depth effect
             }}
           >
-            <Image
+            <img
               src={originalImageUrl}
               alt="Generated Art"
-              layout="fill"
-              className="object-cover rounded-lg transform transition-transform duration-500 ease-out hover:scale-110"
+              className="object-cover w-full h-full rounded-lg transform transition-transform duration-500 ease-out hover:scale-110"
             />
           </div>
         )}
@@ -166,12 +163,10 @@ const HomePage: React.FC = () => {
                 </button>
               </div>
               <div className="w-full h-auto rounded-lg overflow-hidden">
-                <Image
+                <img
                   src={originalImageUrl}
                   alt="Original Image"
-                  width={1200}
-                  height={800}
-                  className="object-contain rounded-lg"
+                  className="object-contain w-full h-auto rounded-lg"
                 />
               </div>
             </div>
