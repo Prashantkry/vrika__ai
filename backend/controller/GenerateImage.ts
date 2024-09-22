@@ -11,9 +11,9 @@ interface GenerateArtRequest {
 
 export const GenerateArt = async (req: express.Request, res: express.Response): Promise<express.Response> => {
     console.log("API triggered for image generation");
-    console.log("token is ", token);
+    // console.log("token is ", token);
     const input: GenerateArtRequest = req.body.inputs;
-    console.log("input is ", input);
+    // console.log("input is ", input);
     
     try {
         const response = await fetch('https://api-inference.huggingface.co/models/markury/breaking-bad-flux', {
@@ -25,12 +25,15 @@ export const GenerateArt = async (req: express.Request, res: express.Response): 
             body: JSON.stringify({ inputs: input }),
         });
 
-        const blob = await response.blob();
-        const arrayBuffer = await blob.arrayBuffer();
+        // const blob = await response.blob();
+        const arrayBuffer = await response.arrayBuffer();
         const originalBuffer = Buffer.from(arrayBuffer); 
-        const base64String = originalBuffer.toString('base64');
-
+        if (!originalBuffer || originalBuffer.length === 0) {
+            return res.status(400).json({ error: 'Received an empty image buffer' });
+        }
+        
         // Resize images
+        const base64String = originalBuffer.toString('base64');
         const mediumBuffer = await sharp(originalBuffer).resize(800, 800).toBuffer();
         const smallBuffer = await sharp(originalBuffer).resize(400, 400).toBuffer();
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import w1 from '../style/media';
+import { logo } from '../style/media';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +18,7 @@ const Navbar = () => {
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
                     <Link to="/">
-                        <img src={w1} alt="logo" className='w-[50px] h-[40px] rounded' />
+                        <img src={logo} alt="logo" className='w-[50px] h-[40px] rounded' />
                     </Link>
 
                     {/* Main Menu Links for larger screens */}
