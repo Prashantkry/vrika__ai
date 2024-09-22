@@ -16,7 +16,8 @@ const TextToImage = () => {
         setInputValue(event.target.value);
     };
 
-    const backendAPI = "http://localhost:4000/api/v1/GenerateArt";
+    // const backendAPI = "http://localhost:4000/api/v1/GenerateArt";
+    const backendAPI = "https://vrika-ai-production-8flg.vercel.app/api/v1/GenerateArt";
 
     const handleGenerateArt = async () => {
         setLoading(true);
