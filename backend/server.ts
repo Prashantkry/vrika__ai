@@ -1,4 +1,4 @@
-import http from 'http'
+import http, { METHODS } from 'http'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
@@ -11,18 +11,23 @@ dotenv.config()
 const PORT = process.env.PORT
 
 const app = express()
-app.use(cors())
+app.use(cors({
+    origin: process.env.CLIENT_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}))
 app.use(bodyParser.json())
 app.use(cookieParser())
-app.use("/api/v1",versionRoutes)
+app.use("/api/v1", versionRoutes)
 
 const server = http.createServer(app)
 
-// connectDb().then(() =>
+connectDb().then(() =>
     server.listen(PORT, () => {
         console.log(`Server is listening on http://localhost:${PORT}`);
     })
-// )
+)
 
 app.get('/', (req: express.Request, res: express.Response) => {
     res.send(`<h1>Backend is osm chill 🎉🥂</h1>`)
