@@ -10,7 +10,7 @@ import versionRoutes from './routes/versionRoutes'
 dotenv.config()
 const PORT = process.env.PORT
 const CLIENT_URL =process.env.CLIENT_URL
-if(!PORT || !CLIENT_URL) {
+if (!PORT || !CLIENT_URL) {
     console.error('Please define PORT and CLIENT_URL in .env')
     process.exit(1)
 }
