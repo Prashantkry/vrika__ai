@@ -25,7 +25,7 @@ const TextToImage = () => {
         setError(null);
         setOriginalImageUrl(null);
         try {
-            const response = await fetch(backendAPI, {
+            const response = await fetch(`${backendAPI}/api/v1/GenerateArt`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
