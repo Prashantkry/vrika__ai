@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaFacebook, FaClipboard, FaLinkedin, FaInstagram, FaDownload } from "react-icons/fa"; // Social media icons
 import w1 from "../style/media";
+
 const TextToImage = () => {
     const [inputValue, setInputValue] = useState<string>("");
     const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
@@ -16,8 +17,8 @@ const TextToImage = () => {
         setInputValue(event.target.value);
     };
 
-    // const backendAPI = "http://localhost:4000/api/v1/GenerateArt";
-    const backendAPI = "https://vrika-ai-production-8flg.vercel.app/api/v1/GenerateArt";
+    const backendAPI = import.meta.env.VITE_BackendAPI!;
+    console.log("Backend API:", backendAPI);
 
     const handleGenerateArt = async () => {
         setLoading(true);
@@ -95,7 +96,7 @@ const TextToImage = () => {
     };
     return (
         <>
-            <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex flex-col justify-start items-center py-8 md:py-0">
+            <div className="min-h-screen bg-gradient-to-b from-black to-purple-900 flex flex-col justify-start items-center py-8 md:py-0">
                 {showModal && originalImageUrl ? (
                     <img src={w1} alt="" className="w-40 md:w-52 h-auto rounded mb-6" />
                 ) : (
@@ -158,10 +159,10 @@ const TextToImage = () => {
                             </div>
 
                             <div className="flex flex-col md:flex-row items-start md:items-center justify-start md:justify-between w-full border-0 h-fit md:pb-4">
-                                <div className="flex items-center justify-center space-x-6 w-fit rounded border border-gray-800">
+                                <div className="flex items-center justify-center space-x-1 w-fit rounded bg-purple-800 border-0 border-gray-800">
                                     {/* Download Section */}
                                     <select
-                                        className="p-2 bg-black from-gray-300 to-gray-400 text-gray-200 rounded-lg transition-transform transform outline-none"
+                                        className="p-2 border-0 bg-purple-800 from-gray-300 to-gray-400 text-gray-200 rounded-lg transition-transform transform outline-none"
                                         value={selectedSize}
                                         onChange={(e) => setSelectedSize(e.target.value)}
                                     >
@@ -172,7 +173,7 @@ const TextToImage = () => {
 
                                     <button
                                         onClick={downloadImage}
-                                        className="px-4 py-2 text-white"
+                                        className="p-2 border-0 text-white"
                                     >
                                         <FaDownload />
                                     </button>
