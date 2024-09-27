@@ -9,7 +9,7 @@ import versionRoutes from './routes/versionRoutes'
 
 dotenv.config()
 const PORT = process.env.PORT
-const CLIENT_URL =process.env.CLIENT_URL
+const CLIENT_URL = process.env.CLIENT_URL
 if (!PORT || !CLIENT_URL) {
     console.error('Please define PORT and CLIENT_URL in .env')
     process.exit(1)
@@ -27,7 +27,6 @@ app.use(cookieParser())
 app.use("/api/v1", versionRoutes)
 
 const server = http.createServer(app)
-
 connectDb().then(() =>
     server.listen(PORT, () => {
         console.log(`Server is listening on http://localhost:${PORT}`);
