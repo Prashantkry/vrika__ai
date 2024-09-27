@@ -6,7 +6,7 @@
     }
   ],
   "functions": {
-    "api/v1/GenerateArt": {
+    "/api/v1/GenerateArt": {
       "maxDuration": 60
     }
   }
