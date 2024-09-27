@@ -10,5 +10,10 @@
       "src": "/(.*)",
       "dest": "server.ts"
     }
-  ]
+  ],
+  "functions": {
+    "api/v1/GenerateArt": {
+      "maxDuration": 60
+    }
+  }
 }

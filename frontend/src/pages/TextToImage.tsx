@@ -100,7 +100,7 @@ const TextToImage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-black to-purple-900 flex flex-col justify-start items-center py-8 md:py-0">
-            <img src={w1} alt="" className="w-40 md:w-52 h-auto rounded mb-6" />
+            <img src={w1} alt="" className="w-40 md:w-52 h-auto rounded mb-6 md:mt-5" />
 
             <div className="text-white text-center border-0 p-6 md:px-10 md:py-2 w-full max-w-screen-lg mx-auto space-y-8 md:space-y-10">
                 <h1 className="text-3xl pb-3 border-0 md:text-6xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
