@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import sharp from 'sharp'; 
-import { v4 as uuidv4 } from 'uuid'; 
+import { v4 as uuidv4 } from 'uuid';
 
 dotenv.config();
 const token: string = process.env.token!;
+const ImageGenerationAPI = process.env.ImageGenerationAPI!;
 
 interface GenerateArtRequest {
     inputs: string;
@@ -20,7 +20,7 @@ export const GenerateArt = async (req: express.Request, res: express.Response): 
     const taskId = uuidv4();
 
     try {
-        const response = await fetch('https://api-inference.huggingface.co/models/markury/breaking-bad-flux', {
+        const response = await fetch(ImageGenerationAPI, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -28,36 +28,20 @@ export const GenerateArt = async (req: express.Request, res: express.Response): 
             },
             body: JSON.stringify({ inputs }),
         });
-        if (!response.ok) {
-            return res.status(500).json({ error: `Failed to fetch image: ${response.statusText}` });
-        }
+        if (!response.ok) return res.status(500).json({ error: `Failed to fetch image: ${response.statusText}` });
 
         // Convert response to buffer
-        const arrayBuffer = await response.arrayBuffer();
-        const originalBuffer = Buffer.from(arrayBuffer); 
-        if (!originalBuffer || originalBuffer.length === 0) {
+        const imageBuffer = Buffer.from(await response.arrayBuffer());
+        if (!imageBuffer || imageBuffer.length === 0)
             return res.status(500).json({ error: 'Received an empty image buffer' });
-        }
-        
-        // Resize images using sharp
-        const mediumBuffer = await sharp(originalBuffer).resize(800, 800).toBuffer();
-        const smallBuffer = await sharp(originalBuffer).resize(400, 400).toBuffer();
 
-        // Convert to Base64
-        const originalBase64 = originalBuffer.toString('base64');
-        const mediumBase64 = mediumBuffer.toString('base64');
-        const smallBase64 = smallBuffer.toString('base64');
-
+        console.log("Image generation completed");
         return res.status(200).json({
             message: 'Image generation completed',
             taskId,
-            images: {
-                original: originalBase64,
-                medium: mediumBase64,
-                small: smallBase64,
-            },
+            images: imageBuffer.toString('base64')
         });
-    } catch (error:any) {
+    } catch (error: any) {
         console.error('Error:', error);
         return res.status(500).json({ error: 'Image generation failed: ' + error.message });
     }

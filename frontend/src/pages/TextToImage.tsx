@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { FaFacebook, FaClipboard, FaLinkedin, FaInstagram, FaDownload } from "react-icons/fa"; 
+import { FaFacebook, FaClipboard, FaLinkedin, FaInstagram, FaDownload } from "react-icons/fa";
 import w1 from "../style/media";
 
 const TextToImage = () => {
     const [inputValue, setInputValue] = useState<string>("");
-    const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
-    const [mediumImageUrl, setMediumImageUrl] = useState<string | null>(null);
-    const [smallImageUrl, setSmallImageUrl] = useState<string | null>(null);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [selectedSize, setSelectedSize] = useState<string>("original");
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.target.value);
@@ -22,7 +19,7 @@ const TextToImage = () => {
     const handleGenerateArt = async () => {
         setLoading(true);
         setError(null);
-        setOriginalImageUrl(null);
+        setImageUrl(null);
         try {
             const response = await fetch(`${backendAPI}/api/v1/GenerateArt`, {
                 method: "POST",
@@ -38,10 +35,7 @@ const TextToImage = () => {
 
             const data = await response.json();
             console.log("Generated Art:", data);
-
-            setOriginalImageUrl(`data:image/jpeg;base64,${data.images.original}`);
-            setMediumImageUrl(`data:image/jpeg;base64,${data.images.medium}`);
-            setSmallImageUrl(`data:image/jpeg;base64,${data.images.small}`);
+            setImageUrl(`data:image/jpeg;base64,${data.images}`);
         } catch (error) {
             console.error("Error:", error);
             setError("Failed to generate art. Please try again.");
@@ -52,19 +46,10 @@ const TextToImage = () => {
 
     // Function to handle image download based on selected size
     const downloadImage = () => {
-        let url = originalImageUrl;
-        let size = "original";
-        if (selectedSize === "medium") {
-            url = mediumImageUrl;
-            size = "medium";
-        } else if (selectedSize === "small") {
-            url = smallImageUrl;
-            size = "small";
-        }
-        if (url) {
+        if (imageUrl) {
             const link = document.createElement("a");
-            link.href = url;
-            link.download = `generated-art-${size}.jpg`;
+            link.href = imageUrl;
+            link.download = `generated-art.jpg`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -138,7 +123,7 @@ const TextToImage = () => {
 
                 {error && <p className="mt-4 text-red-500">{error}</p>}
 
-                {originalImageUrl && (
+                {imageUrl && (
                     <>
                         <div
                             className="relative mt-8 h-60 md:h-96 w-full rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl hover:translate-y-[-10px] cursor-pointer"
@@ -151,42 +136,30 @@ const TextToImage = () => {
                                 Click on image to view
                             </p>
                             <img
-                                src={originalImageUrl}
+                                src={imageUrl}
                                 alt="Generated Art"
                                 className="w-full h-full rounded-lg transform transition-transform duration-500 ease-out object-cover hover:scale-110"
                             />
                         </div>
 
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-start md:justify-between w-full border-0 h-fit md:pb-4">
-                            <div className="flex items-center justify-center space-x-1 w-fit rounded bg-purple-800 border-0 border-gray-800">
-                                <select
-                                    className="p-2 border-0 bg-purple-800 from-gray-300 to-gray-400 text-gray-200 rounded-lg transition-transform transform outline-none"
-                                    value={selectedSize}
-                                    onChange={(e) => setSelectedSize(e.target.value)}
-                                >
-                                    <option value="original">Original</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="small">Small</option>
-                                </select>
-
-                                <button
-                                    onClick={downloadImage}
-                                    className="p-2 border-0 text-white"
-                                >
-                                    <FaDownload />
-                                </button>
-                            </div>
-
                             {/* Social Media Share Buttons */}
                             <div className="flex justify-center items-center space-x-4 mt-3 md:mt-0 border-0 w-fit">
                                 <button
-                                    onClick={() => shareOnFacebook(originalImageUrl!)}
+                                    onClick={downloadImage}
+                                    className="p-2 border-0 text-white bg-purple-800 flex items-center justify-center rounded-md"
+                                >
+                                    {/* <span className="mr-2 font-bold text-purple-300">Download</span>  */}
+                                    <FaDownload />
+                                </button>
+                                <button
+                                    onClick={() => shareOnFacebook(imageUrl!)}
                                     className="p-2 bg-blue-600 text-white rounded-full flex items-center space-x-2 hover:bg-blue-700"
                                 >
                                     <FaFacebook size={20} />
                                 </button>
                                 <button
-                                    onClick={() => shareOnLinkedIn(originalImageUrl!)}
+                                    onClick={() => shareOnLinkedIn(imageUrl!)}
                                     className="p-2 bg-blue-600 text-white rounded-full flex items-center space-x-2 hover:bg-blue-700"
                                 >
                                     <FaLinkedin size={20} />
@@ -198,7 +171,7 @@ const TextToImage = () => {
                                     <FaInstagram size={20} />
                                 </button>
                                 <button
-                                    onClick={() => copyToClipboard(originalImageUrl!)}
+                                    onClick={() => copyToClipboard(imageUrl!)}
                                     className="p-2 bg-gray-700 text-white rounded-full flex items-center space-x-2 hover:bg-gray-800"
                                 >
                                     <FaClipboard size={20} />
@@ -217,7 +190,7 @@ const TextToImage = () => {
                                         &times;
                                     </button>
                                     <img
-                                        src={originalImageUrl}
+                                        src={imageUrl}
                                         alt="Generated Art"
                                         className="w-full h-full rounded-lg object-cover border-0"
                                     />

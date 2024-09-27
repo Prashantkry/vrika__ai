@@ -35,6 +35,14 @@ const Navbar = () => {
                             Contact
                             {isActive('/ContactPage') && <span className="absolute left-0 bottom-0 w-full h-[2px] bg-indigo-500"></span>}
                         </Link>
+                        <Link to="/SignUp" className={`relative transition duration-300 ${isActive('/LogOut') ? 'text-indigo-500' : 'hover:text-indigo-400 group'}`}>
+                            Log Out
+                            {isActive('/SignUp') && <span className="absolute left-0 bottom-0 w-full h-[2px] bg-indigo-500"></span>}
+                        </Link>
+                        <Link to="/SignIn" className={`relative transition duration-300 ${isActive('/LogOut') ? 'text-indigo-500' : 'hover:text-indigo-400 group'}`}>
+                            SignIn
+                            {isActive('/SignIn') && <span className="absolute left-0 bottom-0 w-full h-[2px] bg-indigo-500"></span>}
+                        </Link>
                     </div>
 
                     {/* Hamburger Menu Button for small screens */}
@@ -60,6 +68,12 @@ const Navbar = () => {
                         </Link>
                         <Link to="/ContactPage" className={`block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 hover:text-white ${isActive('/ContactPage') ? 'bg-gray-800 text-white' : ''}`}>
                             Contact
+                        </Link>
+                        <Link to="/SignUp" className={`block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 hover:text-white ${isActive('/ContactPage') ? 'bg-gray-800 text-white' : ''}`}>
+                            Log Out
+                        </Link>
+                        <Link to="/SignIn" className={`block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 hover:text-white ${isActive('/ContactPage') ? 'bg-gray-800 text-white' : ''}`}>
+                            SignIn
                         </Link>
                     </div>
                 </div>
