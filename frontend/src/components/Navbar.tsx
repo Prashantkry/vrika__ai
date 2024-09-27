@@ -36,7 +36,7 @@ const Navbar = () => {
                             {isActive('/ContactPage') && <span className="absolute left-0 bottom-0 w-full h-[2px] bg-indigo-500"></span>}
                         </Link>
                         <Link to="/SignUp" className={`relative transition duration-300 ${isActive('/LogOut') ? 'text-indigo-500' : 'hover:text-indigo-400 group'}`}>
-                            Log Out
+                            Sign Up
                             {isActive('/SignUp') && <span className="absolute left-0 bottom-0 w-full h-[2px] bg-indigo-500"></span>}
                         </Link>
                         <Link to="/SignIn" className={`relative transition duration-300 ${isActive('/LogOut') ? 'text-indigo-500' : 'hover:text-indigo-400 group'}`}>

@@ -1,4 +1,54 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+const backendAPI = import.meta.env.VITE_BackendAPI!;
+
 const SignIn = () => {
+    // States to store form input values
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const navigate = useNavigate();
+
+    const notifySuccess = (message: string) => toast.success(message);
+    const notifyError = (message: string) => toast.error(message);
+
+    // Function to handle form submission
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault(); // Prevent default form submission
+
+        // Prepare the data to be sent to the backend
+        const userData = {
+            email,
+            password,
+        };
+
+        try {
+            const response = await fetch(`${backendAPI}/api/v1/signIn`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                notifySuccess('User signed in successfully!');
+                setEmail('');
+                setPassword('');
+                navigate('/')
+            } else {
+                console.error('Error signing in:', data.message);
+                notifyError(`Error: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error during sign-in:', error);
+            notifyError('Error signing in, please try again later.');
+        }
+    };
+
     return (
         <section className="bg-gradient-to-b from-black to-purple-900 text-white flex flex-col items-center justify-center w-full pb-10 md:p-20">
             <div className='w-[90vw] md:w-[50vw]'>
@@ -16,7 +66,7 @@ const SignIn = () => {
                     <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 opacity-20 blur-lg animate-pulse"></div>
 
                     {/* Form Content */}
-                    <form action="/signin" method="POST" className="relative z-10 space-y-6">
+                    <form onSubmit={handleSubmit} className="relative z-10 space-y-6">
                         {/* Email Input */}
                         <div>
                             <label htmlFor="email" className="block text-sm font-semibold text-gray-200 mb-2">
@@ -28,6 +78,8 @@ const SignIn = () => {
                                 name="email"
                                 className="bg-gray-800 border border-gray-700 text-white rounded-lg w-full p-3 focus:ring-purple-500 focus:border-purple-500 transition duration-200"
                                 placeholder="Your Email Address"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
                         </div>
@@ -43,6 +95,8 @@ const SignIn = () => {
                                 name="password"
                                 className="bg-gray-800 border border-gray-700 text-white rounded-lg w-full p-3 focus:ring-purple-500 focus:border-purple-500 transition duration-200"
                                 placeholder="Your Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
                         </div>
