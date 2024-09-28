@@ -1,4 +1,4 @@
-import http, { METHODS } from 'http'
+import http from 'http'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
@@ -19,9 +19,11 @@ const app = express()
 app.use(cors({
     origin: CLIENT_URL || '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    // allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }))
+app.options('*', cors());
+
 app.use(bodyParser.json())
 app.use(cookieParser())
 app.use("/api/v1", versionRoutes)

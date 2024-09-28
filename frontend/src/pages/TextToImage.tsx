@@ -27,6 +27,7 @@ const TextToImage = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ inputs: inputValue }),
+                credentials: "include",
             });
 
             if (!response.ok) {
