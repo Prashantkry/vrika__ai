@@ -17,9 +17,9 @@ if (!PORT || !CLIENT_URL) {
 
 const app = express()
 app.use(cors({
-    origin: CLIENT_URL,
+    origin: CLIENT_URL || '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    // allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }))
 app.use(bodyParser.json())
