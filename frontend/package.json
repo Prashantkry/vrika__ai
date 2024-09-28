@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "proxy": "https://vrika-ai-production-8flg.vercel.app",
+  "proxy": "https://vrika-ai-production-whfc.vercel.app",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
