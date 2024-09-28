@@ -20,7 +20,9 @@ app.use(cors({
     origin: CLIENT_URL || '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
+    credentials: true,
+    preflightContinue: true,
+    maxAge: 600,
 }))
 app.options('*', cors());
 
