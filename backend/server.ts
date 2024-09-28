@@ -16,15 +16,29 @@ if (!PORT || !CLIENT_URL) {
 }
 
 const app = express()
+
+// CORS Configuration
 app.use(cors({
-    origin: CLIENT_URL || '*',
+    origin: (origin, callback) => {
+        if (origin === CLIENT_URL) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // Allow credentials such as cookies
+    preflightContinue: true, // Allow preflight to continue
+    maxAge: 600, // Cache the preflight response for 10 minutes
+}));
+
+// Handle preflight OPTIONS request
+app.options('*', cors({
+    origin: CLIENT_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
-    preflightContinue: true,
-    maxAge: 600,
-}))
-app.options('*', cors());
+}));
 
 app.use(bodyParser.json())
 app.use(cookieParser())
