@@ -18,20 +18,20 @@ if (!PORT || !CLIENT_URL) {
 const app = express()
 
 // CORS Configuration
-app.use(cors({
-    origin: (origin, callback) => {
-        if (origin === CLIENT_URL) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    preflightContinue: true,
-    maxAge: 600,
-}));
+// app.use(cors({
+//     origin: (origin, callback) => {
+//         if (origin === CLIENT_URL) {
+//             callback(null, true);
+//         } else {
+//             callback(new Error('Not allowed by CORS'));
+//         }
+//     },
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//     credentials: true,
+//     preflightContinue: true,
+//     maxAge: 600,
+// }));
 
 // Handle preflight OPTIONS request
 app.options('*', cors({
