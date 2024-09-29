@@ -28,9 +28,9 @@ app.use(cors({
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true, // Allow credentials such as cookies
-    preflightContinue: true, // Allow preflight to continue
-    maxAge: 600, // Cache the preflight response for 10 minutes
+    credentials: true,
+    preflightContinue: true,
+    maxAge: 600,
 }));
 
 // Handle preflight OPTIONS request
@@ -40,7 +40,7 @@ app.options('*', cors({
     credentials: true,
 }));
 
-app.use(bodyParser.json())
+app.use(bodyParser.json({ limit: '10mb' }))
 app.use(cookieParser())
 app.use("/api/v1", versionRoutes)
 

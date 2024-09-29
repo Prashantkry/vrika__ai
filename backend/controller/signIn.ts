@@ -2,39 +2,36 @@ import express from 'express';
 import { UserModel } from '../model/userModel';  // Import the User model
 import { comparePassword } from '../utility/encryptPassword';  // Import utility function to compare hashed passwords
 import { signInData } from '../utility/interface';  // Import the sign-in data interface
+import jwt from 'jsonwebtoken'; // Import JWT
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'; // Replace with your actual secret
 
 export const signIn = async (req: express.Request, res: express.Response) => {
-    // Extract email and password from the request body
     const { email, password }: signInData = req.body;
-    console.log(email, password);
 
-    // Check if email and password are provided
     if (!email || !password) {
-        return res.status(400).json({ message: "Email or password is missing" }).end();  // Respond with 400 (Bad Request) if missing
+        return res.status(400).json({ message: "Email or password is missing" });
     }
 
     try {
-        // Check if the user with the given email exists
         const user = await UserModel.findOne({ email });
         if (!user || !user.password) {
-            // Respond with 404 (Not Found) if user doesn't exist or no password is set
-            return res.status(404).json({ message: "No user found or incorrect password" }).end();
+            return res.status(404).json({ message: "No user found or incorrect password" });
         }
 
-        // Compare the provided password with the hashed password in the database
         const isPasswordCorrect = await comparePassword(password, user.password);
-        console.log(isPasswordCorrect);
-
-        // If password is incorrect, respond with an error
         if (!isPasswordCorrect) {
-            return res.status(401).json({ message: "Incorrect password" }).end();  // 401 means unauthorized
+            return res.status(401).json({ message: "Incorrect password" });
         }
 
-        // If everything is correct, respond with a success message
-        return res.status(200).json({ message: "Sign in successful" }).end();
+        // **Highlight: Create a token payload and sign the token**
+        const tokenPayload = { id: user._id, email: user.email };
+        const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' }); // Token expires in 1 hour
+
+        // Respond with token
+        return res.status(200).json({ message: "Sign in successful", token });
     } catch (error) {
-        // Catch any unexpected errors and respond with a 500 (Internal Server Error)
         console.error(error);
-        return res.status(500).json({ message: "Server error, please try again later" }).end();
+        return res.status(500).json({ message: "Server error, please try again later" });
     }
 };

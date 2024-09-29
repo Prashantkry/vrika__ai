@@ -16,6 +16,7 @@ const TextToImage = () => {
 
     const backendAPI = import.meta.env.VITE_BackendAPI!;
 
+    // ! Generate Image Function
     const handleGenerateArt = async () => {
         setLoading(true);
         setError(null);
@@ -36,7 +37,9 @@ const TextToImage = () => {
 
             const data = await response.json();
             console.log("Generated Art:", data);
+            const generatedImageUrl = `data:image/jpeg;base64,${data.images}`;
             setImageUrl(`data:image/jpeg;base64,${data.images}`);
+            await handleSaveImage(generatedImageUrl);
         } catch (error) {
             console.error("Error:", error);
             setError("Failed to generate art. Please try again.");
@@ -45,7 +48,7 @@ const TextToImage = () => {
         }
     };
 
-    // Function to handle image download based on selected size
+    // ! Function to handle image download based on selected size
     const downloadImage = () => {
         if (imageUrl) {
             const link = document.createElement("a");
@@ -57,6 +60,7 @@ const TextToImage = () => {
         }
     };
 
+    // ! Function to copy image URL to clipboard
     const copyToClipboard = (url: string) => {
         navigator.clipboard.writeText(url).then(() => {
             alert("Image URL copied to clipboard!");
@@ -71,7 +75,7 @@ const TextToImage = () => {
         setShowModal(false);
     };
 
-    // Functions for sharing on social media
+    // ! Functions for sharing on social media
     const shareOnFacebook = (url: string) => {
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
     };
@@ -82,6 +86,36 @@ const TextToImage = () => {
 
     const shareOnInstagram = () => {
         alert("Instagram sharing not directly supported via URL sharing.");
+    };
+
+    // ! Function to save the generated image to the database
+    const handleSaveImage = async (imageUrl: string) => {
+        if (!imageUrl) return;
+        // console.log('Image Data Size:', new Blob([imageUrl]).size);
+        const user = localStorage.getItem('user');
+        const email = user
+        if (!email) {
+            console.error('Email not found in local storage.');
+            return;
+        }
+        try {
+            const response = await fetch(`${backendAPI}/api/v1/ImageStoreDatabase`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, imageUrl, prompts: inputValue }),
+                credentials: 'include',
+            });
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Image saved:', data);
+            } else {
+                console.error('Failed to save image:', data.message);
+            }
+        } catch (error) {
+            console.error('Error saving image:', error);
+        }
     };
 
     return (

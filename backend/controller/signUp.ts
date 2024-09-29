@@ -13,7 +13,6 @@ export const signUpData = async (req: Request, res: Response): Promise<Response>
         return res.status(400).json({ message: "Name, email, phone number, and password are required." });
     }
 
-
     const userExist = await UserModel.findOne({ email });
     if (userExist) {
         return res.status(409).json({ message: "User already exists. Please sign in." });
@@ -23,9 +22,23 @@ export const signUpData = async (req: Request, res: Response): Promise<Response>
     const hashedPassword = await hashPassword(password);
 
     // Create a new user
-    const user = new UserModel({ name, email, phoneNo, password: hashedPassword });
+    const user = new UserModel({
+        pic: "",
+        name,
+        email,
+        phoneNo,
+        password: hashedPassword,
+        credits: 10,
+        plan: "Free",
+        cardDetails: {
+            cardHolderName:"",
+            cardNumber: "",
+            expiryDate: "",
+            cvv: "",
+        },
+    });
 
     // Save the new user
     await user.save();
-    return res.status(201).json({ message: "You are signed up successfully!" });
+    return res.status(201).json({ message: "You are signed up successfully!" }); // No changes made here
 };

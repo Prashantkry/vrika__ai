@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 
 const userSchema = new mongoose.Schema({
+    pic: String,
     name: {
         type: String,
         require: true
@@ -14,7 +15,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    pic: String,
+    credits: Number,
+    plan: String,
+    cardDetails: {
+        cardHolderName: String,
+        cardNumber: String,
+        expiryDate: String,
+        cvv: String
+    }
 }, { collection: "signUpData" })
 
 export const UserModel = mongoose.model("UserModel", userSchema);

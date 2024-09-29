@@ -29,7 +29,7 @@ const ContactPage = () => {
             <input
               type="email"
               required
-              className="w-full p-4 rounded-lg bg-purple-700 text-white placeholder-gray-300 transition-transform duration-300 transform hover:scale-105 focus:scale-105 focus:ring-2 focus:ring-purple-500"
+              className="w-full p-4 outline-none rounded-lg bg-purple-700 text-white placeholder-gray-300 transition-transform duration-300 transform hover:scale-105 focus:scale-105 focus:ring-2 focus:ring-purple-500"
               placeholder="Your Email Address"
             />
           </div>
@@ -39,7 +39,7 @@ const ContactPage = () => {
             <label className="text-lg mb-2">Phone (Optional)</label>
             <input
               type="tel"
-              className="w-full p-4 rounded-lg bg-purple-700 text-white placeholder-gray-300 transition-transform duration-300 transform hover:scale-105 focus:scale-105 focus:ring-2 focus:ring-purple-500"
+              className="w-full p-4 outline-none rounded-lg bg-purple-700 text-white placeholder-gray-300 transition-transform duration-300 transform hover:scale-105 focus:scale-105 focus:ring-2 focus:ring-purple-500"
               placeholder="Your WhatsApp/Phone Number"
             />
           </div>
@@ -49,7 +49,7 @@ const ContactPage = () => {
             <label className="text-lg mb-2">Message</label>
             <textarea
               required
-              className="w-full p-4 rounded-lg bg-purple-700 text-white placeholder-gray-300 transition-transform duration-300 transform hover:scale-105 focus:scale-105 focus:ring-2 focus:ring-purple-500"
+              className="w-full p-4 outline-none rounded-lg bg-purple-700 text-white placeholder-gray-300 transition-transform duration-300 transform hover:scale-105 focus:scale-105 focus:ring-2 focus:ring-purple-500"
               placeholder="Your Message..."
               rows={6}
             />

@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 const backendAPI = import.meta.env.VITE_BackendAPI!;
+import { ClipLoader } from 'react-spinners';
+import { FaRightLong } from 'react-icons/fa6';
 
 const SignIn = () => {
     // States to store form input values
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
@@ -23,6 +26,8 @@ const SignIn = () => {
             password,
         };
 
+        setLoading(true);
+
         try {
             const response = await fetch(`${backendAPI}/api/v1/signIn`, {
                 method: 'POST',
@@ -38,7 +43,9 @@ const SignIn = () => {
                 notifySuccess('User signed in successfully!');
                 setEmail('');
                 setPassword('');
-                navigate('/')
+                localStorage.setItem('user', email);
+                localStorage.setItem('token', data.token);
+                navigate('/');
             } else {
                 console.error('Error signing in:', data.message);
                 notifyError(`Error: ${data.message}`);
@@ -46,6 +53,8 @@ const SignIn = () => {
         } catch (error) {
             console.error('Error during sign-in:', error);
             notifyError('Error signing in, please try again later.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -102,13 +111,23 @@ const SignIn = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <div className="text-center flex items-start justify-start">
+                        <div className="text-center flex items-start justify-between w-full">
                             <button
                                 type="submit"
                                 className="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:ring-purple-400 focus:outline-none rounded-lg text-sm px-6 py-3 transition-transform duration-300 hover:scale-105"
+                                disabled={loading}
                             >
-                                Sign In
+                                {loading ? <ClipLoader size={20} color="#fff" /> : 'Sign In'}
                             </button>
+                            <div className="flex flex-col items-center justify-between w- ml-5">
+                                <p className="text-sm text-gray-400 mb-1">Don't have an account?</p>
+                                <button
+                                    onClick={() => navigate('/signup')}
+                                    className="flex items-center justify-center w-full text-purple-400 hover:text-purple-600 transition"
+                                >
+                                    <span>Sign Up</span> <FaRightLong size={14} className="ml-2" />
+                                </button>
+                            </div>
                         </div>
                     </form>
 
