@@ -42,6 +42,7 @@ app.options('*', cors({
 
 app.use(bodyParser.json({ limit: '10mb' }))
 app.use(cookieParser())
+export const maxDuration = 120;
 app.use("/api/v1", versionRoutes)
 
 const server = http.createServer(app)

@@ -10,6 +10,8 @@ interface GenerateArtRequest {
     inputs: string;
 }
 
+export const maxDuration = 59;
+
 export const GenerateArt = async (req: express.Request, res: express.Response): Promise<express.Response> => {
     console.log("API triggered for image generation");
     const { inputs }: GenerateArtRequest = req.body;
