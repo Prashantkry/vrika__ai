@@ -36,5 +36,5 @@ connectDb().then(() =>
 )
 
 app.get('/', (req: express.Request, res: express.Response) => {
-    res.send(`<h1>Backend is osm chill 🎉🥂</h1>`)
+    res.send(`<h1>🙋‍♂️🫣 Backend is osm chill 🎉🥂</h1>`)
 })
