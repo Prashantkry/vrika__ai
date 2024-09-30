@@ -1,4 +1,4 @@
-import http from 'http'
+// import http from 'http'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
@@ -28,13 +28,21 @@ app.use(cookieParser())
 export const maxDuration = 59;
 app.use("/api/v1", versionRoutes)
 
-const server = http.createServer(app)
-connectDb().then(() =>
-    server.listen(PORT, () => {
-        console.log(`Server is listening on http://localhost:${PORT}`);
-    })
-)
-
 app.get('/', (req: express.Request, res: express.Response) => {
     res.send(`<h1>🙋‍♂️🫣 Backend is osm chill 🎉🥂</h1>`)
 })
+
+connectDb().then(() => {
+    console.log('Database connected successfully');
+});
+
+
+// const server = http.createServer(app)
+// connectDb().then(() =>
+//     server.listen(PORT, () => {
+//         console.log(`Server is listening on http://localhost:${PORT}`);
+//     })
+// )
+
+
+export default app;
