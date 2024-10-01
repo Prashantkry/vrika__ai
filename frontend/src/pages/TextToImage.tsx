@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { FaFacebook, FaClipboard, FaLinkedin, FaInstagram, FaDownload } from "react-icons/fa";
+import { FaClipboard, FaDownload } from "react-icons/fa";
 import w1 from "../style/media";
 
 const TextToImage = () => {
@@ -36,7 +36,7 @@ const TextToImage = () => {
             }
 
             const data = await response.json();
-            console.log("Generated Art:", data);
+            // console.log("Generated Art:", data);
             const generatedImageUrl = `data:image/jpeg;base64,${data.images}`;
             setImageUrl(`data:image/jpeg;base64,${data.images}`);
             await handleSaveImage(generatedImageUrl);
@@ -75,23 +75,10 @@ const TextToImage = () => {
         setShowModal(false);
     };
 
-    // ! Functions for sharing on social media
-    const shareOnFacebook = (url: string) => {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
-    };
-
-    const shareOnLinkedIn = (url: string) => {
-        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, "_blank");
-    };
-
-    const shareOnInstagram = () => {
-        alert("Instagram sharing not directly supported via URL sharing.");
-    };
-
     // ! Function to save the generated image to the database
     const handleSaveImage = async (imageUrl: string) => {
         if (!imageUrl) return;
-        // console.log('Image Data Size:', new Blob([imageUrl]).size);
+        // console.log('Image Data Size:', new Blob([imageUrl]).size);  // * know the size of the image data
         const user = localStorage.getItem('user');
         const email = user
         if (!email) {
@@ -161,7 +148,7 @@ const TextToImage = () => {
                 {imageUrl && (
                     <>
                         <div
-                            className="relative mt-8 h-60 md:h-96 w-full rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl hover:translate-y-[-10px] cursor-pointer"
+                            className="relative mt-8 h-60 md:h-[70vh] w-full rounded-lg overflow-hidden shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl hover:translate-y-[-10px] cursor-pointer"
                             onClick={openModal}
                             style={{
                                 perspective: "1000px",
@@ -173,37 +160,18 @@ const TextToImage = () => {
                             <img
                                 src={imageUrl}
                                 alt="Generated Art"
-                                className="w-full h-full rounded-lg transform transition-transform duration-500 ease-out object-cover hover:scale-110"
+                                className="w-full h-full rounded-lg transform transition-transform duration-500 ease-out object-cover object-left-top hover:scale-110"
                             />
                         </div>
 
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-start md:justify-between w-full border-0 h-fit md:pb-4">
-                            {/* Social Media Share Buttons */}
+                            {/* Download copy Buttons */}
                             <div className="flex justify-center items-center space-x-4 mt-3 md:mt-0 border-0 w-fit">
                                 <button
                                     onClick={downloadImage}
                                     className="p-2 border-0 text-white bg-purple-800 flex items-center justify-center rounded-md"
                                 >
-                                    {/* <span className="mr-2 font-bold text-purple-300">Download</span>  */}
                                     <FaDownload />
-                                </button>
-                                <button
-                                    onClick={() => shareOnFacebook(imageUrl!)}
-                                    className="p-2 bg-blue-600 text-white rounded-full flex items-center space-x-2 hover:bg-blue-700"
-                                >
-                                    <FaFacebook size={20} />
-                                </button>
-                                <button
-                                    onClick={() => shareOnLinkedIn(imageUrl!)}
-                                    className="p-2 bg-blue-600 text-white rounded-full flex items-center space-x-2 hover:bg-blue-700"
-                                >
-                                    <FaLinkedin size={20} />
-                                </button>
-                                <button
-                                    onClick={shareOnInstagram}
-                                    className="p-2 bg-pink-500 text-white rounded-full flex items-center space-x-2 hover:bg-pink-600"
-                                >
-                                    <FaInstagram size={20} />
                                 </button>
                                 <button
                                     onClick={() => copyToClipboard(imageUrl!)}

@@ -1,4 +1,4 @@
-// import http from 'http'
+import http from 'http'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
@@ -36,13 +36,9 @@ connectDb().then(() => {
     console.log('Database connected successfully');
 });
 
-
-// const server = http.createServer(app)
-// connectDb().then(() =>
-//     server.listen(PORT, () => {
-//         console.log(`Server is listening on http://localhost:${PORT}`);
-//     })
-// )
-
+const server = http.createServer(app)
+server.listen(PORT, () => {
+    console.log(`Server is listening on http://localhost:${PORT}`);
+})
 
 export default app;

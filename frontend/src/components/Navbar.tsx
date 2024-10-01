@@ -4,11 +4,10 @@ import { logo } from '../style/media';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Check if the user is logged in by checking localStorage on component mount
     useEffect(() => {
         const user = localStorage.getItem('user');
         if (user) {
@@ -16,7 +15,7 @@ const Navbar = () => {
         } else {
             setIsLoggedIn(false);
         }
-    }, [location]); // Dependency on 'location' ensures check happens after route changes
+    }, [location]);
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -25,16 +24,16 @@ const Navbar = () => {
     const isActive = (path: string) => location.pathname === path;
 
     const handleSignOut = () => {
-        localStorage.removeItem('user'); // Clear user data
-        setIsLoggedIn(false); // Update login state
+        localStorage.removeItem('user');
+        setIsLoggedIn(false);
     };
 
     const handleProtectedRoute = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
         if (!isLoggedIn) {
-            e.preventDefault(); // Prevent the default link behavior
-            navigate('/SignIn'); // Redirect to SignIn page
+            e.preventDefault();
+            navigate('/SignIn');
         } else {
-            navigate(path); // Proceed to the desired route
+            navigate(path);
         }
     };
 
