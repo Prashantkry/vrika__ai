@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaDownload, FaTimes } from 'react-icons/fa';
-import { FaClipboard, FaPencil } from 'react-icons/fa6';
+import { FaClipboard, FaPencil, FaShield } from 'react-icons/fa6';
 import '../style/CustomOverFlow.css'
+import { toast } from 'react-toastify';
 
 const backendAPI = import.meta.env.VITE_BackendAPI!;
 
@@ -10,7 +11,6 @@ const ProfilePage = () => {
         name: string;
         email: string;
         phoneNo?: string;
-        address?: string;
         credits?: number;
         plan?: string;
         cardDetails: {
@@ -38,17 +38,18 @@ const ProfilePage = () => {
     const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
     const [name, setName] = useState(userData?.name ?? '');
     const [email, setEmail] = useState(userData?.email || '');
-    const [address, setAddress] = useState(userData?.address || '');
     const [phone, setPhone] = useState(userData?.phoneNo || '');
     const [cardHolderName, setCardHolderName] = useState(userData?.cardDetails.cardHolderName || '');
     const [cardNumber, setCardNumber] = useState(userData?.cardDetails.cardNumber || '');
     const [expiryDate, setExpiryDate] = useState(userData?.cardDetails.expiryDate || '');
     const [cvv, setCVV] = useState(userData?.cardDetails.cvv || '');
+    const [showUpgradePlan, setShowUpgradePlan] = useState(true);
 
     const storedEmail = localStorage.getItem('user');
 
+    // ! Fetch User Data
     const getUserData = async () => {
-        const res = await fetch(`${backendAPI}/api/v1/getUserData`, {
+        const res = await fetch(`${backendAPI}/api/v1/getOrUpdateUserData`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -73,46 +74,113 @@ const ProfilePage = () => {
         setLoadingImages(false);
     };
 
+    // ! Get profile picture of the user
+    const getProfilePic = async () => {
+        const res = await fetch(`${backendAPI}/api/v1/getProfilePic`, {
+            method: 'GET',
+            headers: {
+                email: storedEmail!,
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await res.json();
+        if (data.pic) {
+            setProfilePic(data.pic);
+        }
+    }
+
     useEffect(() => {
         getUserData();
         fetchUserImages();
-    }, []);
+        getProfilePic();
+    }, [storedEmail]);
 
-    const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // ! Profile Picture Upload
+    const handleProfilePicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setProfilePic(URL.createObjectURL(e.target.files[0]));
         }
+        const toBase64 = (file: File): Promise<string> => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = (error) => reject(error);
+            });
+        };
+
+        if (!e.target.files) return;
+        const base64Image = await toBase64(e.target.files[0]);
+
+        // 3. **Create the payload with the base64 image**
+        const profilePicData = { profilePic: base64Image };
+        console.log('Profile Pic Data:', profilePicData);
+
+        // * api for updating profile pic
+        fetch(`${backendAPI}/api/v1/uploadProfilePicRoutes`, {
+            method: 'PUT',
+            headers: {
+                email: storedEmail!,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                profilePicData: profilePicData.profilePic,
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.message === 'Profile picture updated successfully.') {
+                    toast.success('Profile picture uploaded successfully.');
+                    getProfilePic();
+                } else {
+                    toast.error('Failed to upload profile picture.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error uploading profile picture:', error);
+                toast.error('Failed to upload profile picture.');
+            });
     };
 
+    // ! Update User Info
     const handleUpdateUserInfo = async () => {
         const updatedUserData = {
             name,
             email,
-            address,
             phone,
             cardDetails: {
+                cardHolderName,
                 cardNumber,
                 expiryDate,
                 cvv
             }
         };
 
-        await fetch(`${backendAPI}/api/v1/updateUserData`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, updatedUserData }),
-        });
+        try {
+            await fetch(`${backendAPI}/api/v1/getOrUpdateUserData`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    email: storedEmail!,
+                },
+                body: JSON.stringify({ email, updatedUserData }),
+            });
+            toast.success('User data updated successfully.');
+            setEditing(false);
+            await fetchUserImages();
+        } catch (error) {
+            console.error('Error updating user data:', error);
+            toast.error('Failed to update user data.');
+        };
+    }
 
-        setEditing(false);
-    };
-
+    // ! Format Date and Time
     const formatDateTime = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleString();
     };
 
+    // ! Copy Image URL to Clipboard
     const copyToClipboard = (base64: string) => {
         const byteCharacters = atob(base64.split(',')[1]);
         const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
@@ -125,6 +193,41 @@ const ProfilePage = () => {
         });
     };
 
+    // ! Delete Generated Image 
+    const handleDeleteImage = async () => {
+        if (!selectedImage) return;
+        const res = await fetch(`${backendAPI}/api/v1/ImageStoreDatabase`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: storedEmail, imageId: selectedImage._id }),
+        });
+        const data = await res.json();
+        if (data.message === 'Image deleted successfully.') {
+            toast.success('Image deleted successfully.');
+            setImages(images.filter((image) => image._id !== selectedImage._id));
+            setSelectedImage(null);
+            fetchUserImages();
+        } else {
+            toast.error('Failed to delete image.');
+        }
+    }
+
+    // ! Edit User Data from click
+    const handleEditUserData = (e: React.MouseEvent<HTMLButtonElement>) => {
+        console.log("Edit User Data clicked");
+        setShowUpgradePlan(false);
+        e.preventDefault()
+        setEditing(true);
+        setName(userData?.name ?? '');
+        setEmail(userData?.email || '');
+        setPhone(userData?.phoneNo || '');
+        setCardHolderName(userData?.cardDetails.cardHolderName || '');
+        setCardNumber(userData?.cardDetails.cardNumber || '');
+        setExpiryDate(userData?.cardDetails.expiryDate || '');
+        setCVV(userData?.cardDetails.cvv || '');
+    }
 
     return (
         <div className="flex flex-col md:flex-row w-full h-screen bg-gradient-to-b from-black to-purple-900 text-white p-3 md:p-5">
@@ -202,17 +305,18 @@ const ProfilePage = () => {
                                     <p><span>CVV - </span>{userData?.cardDetails.cvv || 'N/A'}</p>
                                     <p><span>Expiry Date - </span>{userData?.cardDetails.expiryDate || 'N/A'}</p>
                                 </div>
-                                <div className="w-full ">
+                                <div className="w-full flex items-center justify-between">
                                     {!editing && !loadingUser ? (
                                         <button
-                                            onClick={() => setEditing(true)}
+                                            onClick={(e) => handleEditUserData(e)}
                                             className="bg-purple-600 text-white py-1 px-2 text-sm rounded shadow-lg hover:bg-purple-700 transition"
                                         >
                                             Edit Profile
                                         </button>
                                     ) : (
+                                        // edit form for updating details
                                         editing && (
-                                            <div className=''>
+                                            <div className='w-full'>
                                                 <form className="space-y-2">
                                                     <div className="space-y-1">
                                                         <label>Name:</label>
@@ -238,15 +342,6 @@ const ProfilePage = () => {
                                                             type="text"
                                                             value={phone}
                                                             onChange={(e) => setPhone(e.target.value)}
-                                                            className="w-full p-1 border rounded bg-transparent"
-                                                        />
-                                                    </div>
-                                                    <div className="space-y-1">
-                                                        <label>Address:</label>
-                                                        <input
-                                                            type="text"
-                                                            value={address}
-                                                            onChange={(e) => setAddress(e.target.value)}
                                                             className="w-full p-1 border rounded bg-transparent"
                                                         />
                                                     </div>
@@ -280,22 +375,22 @@ const ProfilePage = () => {
                                                     <div className="space-y-1">
                                                         <label>Expiry Date:</label>
                                                         <input
-                                                            type="text"
+                                                            type="date"
                                                             value={expiryDate}
                                                             onChange={(e) => setExpiryDate(e.target.value)}
                                                             className="w-full p-1 border rounded bg-transparent"
                                                         />
                                                     </div>
                                                 </form>
-                                                <div className="space-x-2 mt-4">
+                                                <div className="space-x-2 mt-4 flex w-full">
                                                     <button
                                                         onClick={handleUpdateUserInfo}
-                                                        className="bg-green-600 text-white py-1 px-2 rounded shadow-lg hover:bg-green-700 transition"
+                                                        className="bg-green-600 text-white text-sm py-1 px-2 rounded shadow-lg hover:bg-green-700 transition"
                                                     >
                                                         Save Changes
                                                     </button>
                                                     <button
-                                                        onClick={() => setEditing(false)}
+                                                        onClick={() => { setEditing(false); setShowUpgradePlan(true); }}
                                                         className="bg-gray-600 text-white py-1 px-2 rounded shadow-lg hover:bg-gray-700 transition"
                                                     >
                                                         Cancel
@@ -304,6 +399,15 @@ const ProfilePage = () => {
                                             </div>
                                         )
                                     )}
+                                    {/* upgrade plan button */}
+                                    {showUpgradePlan &&
+                                        <button
+                                            className="bg-slate-950 border-2 border-slate-900 flex items-center justify-center text-white py-1 px-2 text-sm rounded shadow-lg transition"
+                                        >
+                                            Upgrade Plans
+                                            <FaShield size={15} className="ml-1 text-yellow-600" />
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         )}
@@ -389,6 +493,7 @@ const ProfilePage = () => {
                                 {/* delete button */}
                                 <button
                                     className="bg-red-600 text-white py-1 px-2 rounded-lg hover:bg-red-700 transition"
+                                    onClick={handleDeleteImage}
                                 >
                                     <FaTimes size={15} />
                                 </button>

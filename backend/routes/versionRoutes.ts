@@ -1,5 +1,5 @@
 import express from 'express'
-import signUpRoutes, { getUserDataRoutes, signInRoutes } from './user'
+import signUpRoutes, { getProfilePicRoute, getUserDataRoutes, signInRoutes, uploadProfilePic } from './user'
 import contactRoutes from './contactRoutes'
 import GenerateArtRouter from './GenerateArtroutes'
 import ImageStoreDatabaseRouter from './ImageStoreDatabase'
@@ -10,7 +10,9 @@ versionRoutes.use("/GenerateArt", GenerateArtRouter)
 
 versionRoutes.use("/signUp", signUpRoutes)
 versionRoutes.use("/signIn", signInRoutes)
-versionRoutes.use("/getUserData", getUserDataRoutes)
+versionRoutes.use("/getOrUpdateUserData", getUserDataRoutes)
+versionRoutes.use("/uploadProfilePicRoutes", uploadProfilePic)
+versionRoutes.use("/getProfilePic", getProfilePicRoute)
 
 versionRoutes.use("/contact", contactRoutes)
 
