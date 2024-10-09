@@ -44,8 +44,8 @@ const SignUp = () => {
                 setEmail('');
                 setPassword('');
                 setPhone('');
-                localStorage.setItem('user', JSON.stringify(data.user)); // Store user details
-                localStorage.setItem('token', data.token); // Store token
+                localStorage.setItem('user', JSON.stringify(data.user));
+                localStorage.setItem('token', data.token); 
                 navigate('/');
             } else if (response.status === 409) {
                 toast.info('User already exists. Please sign in.');

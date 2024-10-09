@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaClipboard, FaDownload } from "react-icons/fa";
 import w1 from "../style/media";
@@ -9,6 +9,7 @@ const TextToImage = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [credit, setCredit] = useState<string>("")
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.target.value);
@@ -75,12 +76,13 @@ const TextToImage = () => {
         setShowModal(false);
     };
 
+    const user = localStorage.getItem('user');
+    const email = user
+
     // ! Function to save the generated image to the database
     const handleSaveImage = async (imageUrl: string) => {
         if (!imageUrl) return;
         // console.log('Image Data Size:', new Blob([imageUrl]).size);  // * know the size of the image data
-        const user = localStorage.getItem('user');
-        const email = user
         if (!email) {
             console.error('Email not found in local storage.');
             return;
@@ -96,7 +98,8 @@ const TextToImage = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                console.log('Image saved:', data);
+                // console.log('Image saved:', data);
+                await fetchCredits()
             } else {
                 console.error('Failed to save image:', data.message);
             }
@@ -104,6 +107,23 @@ const TextToImage = () => {
             console.error('Error saving image:', error);
         }
     };
+
+    // ! fetch user credits 
+    const fetchCredits = async () => {
+        const creditsData = await fetch(`${backendAPI}/api/v1/creditsFetch`, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json",
+                ...(email && { email })
+            }
+        })
+        const credits = await creditsData.json()
+        setCredit(credits.credits)
+    }
+
+    useEffect(() => {
+        fetchCredits()
+    }, [])
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-black to-purple-900 flex flex-col justify-start items-center py-8 md:py-0">
@@ -138,7 +158,7 @@ const TextToImage = () => {
                                 <span>Generating...</span>
                             </>
                         ) : (
-                            "Generate Art"
+                            <p>Generate Art <span className="text-xs text-black font-semibold">({credit || 0})</span></p>
                         )}
                     </button>
                 </div>

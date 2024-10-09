@@ -15,14 +15,22 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    credits: Number,
-    plan: String,
-    cardDetails: {
-        cardHolderName: String,
-        cardNumber: String,
-        expiryDate: String,
-        cvv: String
-    }
+    credits: {
+        type: Number,
+        default: 10,
+    },
+    plan: {
+        type: String,
+        default: "Free",
+    },
+    planExpire: {
+        type: String,
+        default: "",
+    },
+    customerId: {
+        type: String,
+        default: "",
+    },
 }, { collection: "signUpData" })
 
 export const UserModel = mongoose.model("UserModel", userSchema);
