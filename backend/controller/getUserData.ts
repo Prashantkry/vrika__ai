@@ -41,25 +41,16 @@ export const getUserData = async (req: express.Request, res: express.Response) =
 export const updateUserData = async (req: express.Request, res: express.Response): Promise<Response> => {
     console.log("updateUserData api called");
     const { email } = req.headers;
-    console.log("email:", email);
     const { updatedUserData } = req.body;
     const { name, phone, cardDetails } = updatedUserData;
     if (!cardDetails) {
         return res.status(400).json({ message: 'Card details are required.' });
     }
-
     const { cardHolderName, cardNumber, expiryDate, cvv } = cardDetails;
-
-    console.log("name:", name, "phoneNo:", phone,
-        "cardHolderName:", cardHolderName,
-        "cardNumber:", cardNumber,
-        "expiryDate:", expiryDate,
-        "cvv:", cvv);
 
     try {
         await client.connect();
         const user = await database.collection(userCollection).findOne({ email });
-        console.log("user:", user);
         if (!user) {
             return res.status(404).json({ message: 'User not found.' });
         }
@@ -78,7 +69,6 @@ export const updateUserData = async (req: express.Request, res: express.Response
                 },
             }
         );
-        console.log("updateRes:", updateRes);
         if (!updateRes) {
             return res.status(500).json({ message: 'Error updating user data.' });
         }
@@ -112,7 +102,6 @@ export const uploadProfilePicAPI = async (req: express.Request, res: express.Res
                 },
             }
         );
-        console.log("updateRes:", updateRes);
         if (!updateRes) {
             return res.status(500).json({ message: 'Error updating profile picture.' });
         }
