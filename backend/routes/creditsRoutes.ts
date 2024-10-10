@@ -4,4 +4,4 @@ const creditsRoutes = express.Router()
 
 creditsRoutes.get('/', creditsFetch)
 
-export default creditsRoutes
+export default creditsRoutes 
