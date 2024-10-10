@@ -3,6 +3,7 @@ import { FaEdit, FaDownload, FaTimes } from 'react-icons/fa';
 import { FaClipboard, FaPencil, FaShield } from 'react-icons/fa6';
 import '../style/CustomOverFlow.css'
 import { toast } from 'react-toastify';
+import { formatDate } from '../helper/formatDate';
 
 const backendAPI = import.meta.env.VITE_BackendAPI!;
 
@@ -13,12 +14,7 @@ const ProfilePage = () => {
         phoneNo?: string;
         credits?: number;
         plan?: string;
-        cardDetails: {
-            cardHolderName: string;
-            cardNumber: string;
-            cvv: string;
-            expiryDate: string;
-        };
+        planExpire?: string;
     }
 
     interface GeneratedImage {
@@ -39,11 +35,9 @@ const ProfilePage = () => {
     const [name, setName] = useState(userData?.name ?? '');
     const [email, setEmail] = useState(userData?.email || '');
     const [phone, setPhone] = useState(userData?.phoneNo || '');
-    const [cardHolderName, setCardHolderName] = useState(userData?.cardDetails.cardHolderName || '');
-    const [cardNumber, setCardNumber] = useState(userData?.cardDetails.cardNumber || '');
-    const [expiryDate, setExpiryDate] = useState(userData?.cardDetails.expiryDate || '');
-    const [cvv, setCVV] = useState(userData?.cardDetails.cvv || '');
     const [showUpgradePlan, setShowUpgradePlan] = useState(true);
+    const [showPayment, setShowPayment] = useState(false);
+    const [activeTab, setActiveTab] = useState('monthly');
 
     const storedEmail = localStorage.getItem('user');
 
@@ -61,6 +55,7 @@ const ProfilePage = () => {
         setLoadingUser(false);
     };
 
+    // ! Fetch User Images
     const fetchUserImages = async () => {
         const res = await fetch(`${backendAPI}/api/v1/ImageStoreDatabase`, {
             method: 'GET',
@@ -148,12 +143,7 @@ const ProfilePage = () => {
             name,
             email,
             phone,
-            cardDetails: {
-                cardHolderName,
-                cardNumber,
-                expiryDate,
-                cvv
-            }
+
         };
 
         try {
@@ -223,10 +213,21 @@ const ProfilePage = () => {
         setName(userData?.name ?? '');
         setEmail(userData?.email || '');
         setPhone(userData?.phoneNo || '');
-        setCardHolderName(userData?.cardDetails.cardHolderName || '');
-        setCardNumber(userData?.cardDetails.cardNumber || '');
-        setExpiryDate(userData?.cardDetails.expiryDate || '');
-        setCVV(userData?.cardDetails.cvv || '');
+
+    }
+
+    // ! Upgrade Plan
+    const handleUpgradePlan = () => {
+        setShowPayment((prev) => !prev);
+    }
+
+    // ! Open Payment Modal
+    const openPayment = (plan: string) => {
+        if (plan === 'monthly') {
+            window.open('https://buy.stripe.com/test_fZeeW5f2ge6E5EsdQR', '_blank');
+        } else {
+            window.open('https://buy.stripe.com/test_eVa01bg6k4w44Ao144', '_blank');
+        }
     }
 
     return (
@@ -296,16 +297,10 @@ const ProfilePage = () => {
                                         <p>{userData?.phoneNo || 'Phone number not provided'}</p>
                                         <p><span>Credits - </span>{userData?.credits || 0}</p>
                                         <p><span>Plan - </span>{userData?.plan || 'Free'}</p>
+                                        <p><span>Expire Date - </span>{userData?.planExpire ? formatDate(userData.planExpire) : ''}</p>
                                     </div>
                                 </div>
-                                {/* Card data */}
-                                <div className="p-2 w-full text-xs space-y-1 bg-gray-800 rounded shadow-inner mb-4">
-                                    <p><span>Name - </span>{userData?.cardDetails.cardHolderName || 'N/A'}</p>
-                                    <p><span>Card No - </span>{userData?.cardDetails.cardNumber || 'N/A'}</p>
-                                    <p><span>CVV - </span>{userData?.cardDetails.cvv || 'N/A'}</p>
-                                    <p><span>Expiry Date - </span>{userData?.cardDetails.expiryDate || 'N/A'}</p>
-                                </div>
-                                <div className="w-full flex items-center justify-between">
+                                <div className="w-full flex items-center justify-between relative">
                                     {!editing && !loadingUser ? (
                                         <button
                                             onClick={(e) => handleEditUserData(e)}
@@ -344,43 +339,7 @@ const ProfilePage = () => {
                                                             onChange={(e) => setPhone(e.target.value)}
                                                             className="w-full p-1 border rounded bg-transparent"
                                                         />
-                                                    </div>
-                                                    <div className="space-y-1">
-                                                        <label>Card Holder Name:</label>
-                                                        <input
-                                                            type="text"
-                                                            value={cardHolderName}
-                                                            onChange={(e) => setCardHolderName(e.target.value)}
-                                                            className="w-full p-1 border rounded bg-transparent"
-                                                        />
-                                                    </div>
-                                                    <div className="space-y-1">
-                                                        <label>Card Number:</label>
-                                                        <input
-                                                            type="text"
-                                                            value={cardNumber}
-                                                            onChange={(e) => setCardNumber(e.target.value)}
-                                                            className="w-full p-1 border rounded bg-transparent"
-                                                        />
-                                                    </div>
-                                                    <div className="space-y-1">
-                                                        <label>CVV:</label>
-                                                        <input
-                                                            type="text"
-                                                            value={cvv}
-                                                            onChange={(e) => setCVV(e.target.value)}
-                                                            className="w-full p-1 border rounded bg-transparent"
-                                                        />
-                                                    </div>
-                                                    <div className="space-y-1">
-                                                        <label>Expiry Date:</label>
-                                                        <input
-                                                            type="date"
-                                                            value={expiryDate}
-                                                            onChange={(e) => setExpiryDate(e.target.value)}
-                                                            className="w-full p-1 border rounded bg-transparent"
-                                                        />
-                                                    </div>
+                                                    </div>                                                    
                                                 </form>
                                                 <div className="space-x-2 mt-4 flex w-full">
                                                     <button
@@ -403,11 +362,60 @@ const ProfilePage = () => {
                                     {showUpgradePlan &&
                                         <button
                                             className="bg-slate-950 border-2 border-slate-900 flex items-center justify-center text-white py-1 px-2 text-sm rounded shadow-lg transition"
+                                            onClick={handleUpgradePlan}
                                         >
                                             Upgrade Plans
                                             <FaShield size={15} className="ml-1 text-yellow-600" />
                                         </button>
                                     }
+                                    {showPayment && (
+                                        <div className="absolute bg-black text-white p-4 rounded w-full h-fit mt-[28vh]">
+                                            {/* Tab Buttons */}
+                                            <div className="flex justify-between border-b border-gray-600 pb-2 mb-4 text-sm font-semibold">
+                                                <button
+                                                    className={`py-2 px-4 rounded ${activeTab === 'monthly' ? 'bg-purple-800' : ''
+                                                        }`}
+                                                    onClick={() => setActiveTab('monthly')}
+                                                >
+                                                    Monthly
+                                                </button>
+                                                <button
+                                                    className={`py-2 px-4 rounded ${activeTab === 'yearly' ? 'bg-purple-800' : ''
+                                                        }`}
+                                                    onClick={() => setActiveTab('yearly')}
+                                                >
+                                                    Yearly
+                                                </button>
+                                            </div>
+
+                                            {/* Plan Details */}
+                                            {activeTab === 'monthly' && (
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex flex-col items-start justify-between w-full">
+                                                        <p className='text-purple-400 font-bold'>&#8377; 299.00</p>
+                                                        <p className='text-sm font-bold text-gray-500'>499 Image Generations</p>
+                                                        <button onClick={() => openPayment('monthly')} className="bg-purple-800 hover:bg-purple-900 text-white py-1 px-3 rounded w-full mt-2">
+                                                            Buy
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {activeTab === 'yearly' && (
+                                                <div className="flex flex-col items-start justify-between">
+                                                    <div className='flex '>
+                                                        <p className='text-purple-400 font-bold'>&#8377; 3289.00</p>
+                                                        <p className='text-[10px] line-through mt-2 ml-2 text-gray-500 font-semibold'>&#8377; 3588.00</p>
+                                                        <p className='text-[10px] mt-2 ml-2 text-gray-500 font-semibold'>(1 month free)</p>
+                                                    </div>
+                                                    <p className='text-sm font-bold text-gray-500'>6000 Image Generations</p>
+                                                    <button onClick={() => openPayment('yearly')} className="bg-purple-800 hover:bg-purple-900 text-white py-1 px-3 rounded w-full mt-2">
+                                                        Buy
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}

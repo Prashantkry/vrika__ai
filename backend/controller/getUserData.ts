@@ -28,7 +28,7 @@ export const getUserData = async (req: express.Request, res: express.Response) =
             phoneNo: user.phoneNo,
             credits: user.credits,
             plan: user.plan,
-            cardDetails: user.cardDetails,
+            planExpire:user.planExpire
         }
         return res.status(200).json({ message: 'User found.', userData });
     } catch (error) {

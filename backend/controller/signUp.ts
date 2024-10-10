@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'; // Corrected import
+import { Request, Response } from 'express';
 import { userProfile } from '../utility/interface';
 import { UserModel } from '../model/userModel';
 import { hashPassword } from '../utility/encryptPassword';
@@ -18,7 +18,6 @@ export const signUpData = async (req: Request, res: Response): Promise<Response>
         return res.status(409).json({ message: "User already exists. Please sign in." });
     }
 
-    // Hash the password
     const hashedPassword = await hashPassword(password);
 
     // Create a new user
@@ -27,18 +26,8 @@ export const signUpData = async (req: Request, res: Response): Promise<Response>
         name,
         email,
         phoneNo,
-        password: hashedPassword,
-        credits: 10,
-        plan: "Free",
-        cardDetails: {
-            cardHolderName:"",
-            cardNumber: "",
-            expiryDate: "",
-            cvv: "",
-        },
+        password: hashedPassword,        
     });
-
-    // Save the new user
     await user.save();
-    return res.status(201).json({ message: "You are signed up successfully!" }); // No changes made here
+    return res.status(201).json({ message: "You are signed up successfully!" });
 };

@@ -2,11 +2,14 @@
 import { Request, Response } from 'express';
 import { MongoClient } from 'mongodb';
 import ImageStoreDatabase from '../model/GeneratedImage';
+import { UserModel } from '../model/userModel';
+
+const DataBase = 'VrikaAI'
+const userCollection = 'signUpData'
 
 // Function to handle image submission
 export const saveImageDatabase = async (req: Request, res: Response) => {
     const { email, imageUrl, prompts } = req.body;
-    // Validate input
     const imageData = imageUrl
     if (!email || !imageData || typeof email !== 'string' || typeof imageData !== 'string' || !prompts) {
         return res.status(400).json({ message: 'Email and image data are required.' });
@@ -19,6 +22,12 @@ export const saveImageDatabase = async (req: Request, res: Response) => {
             generatedAt: new Date(),
         });
         await newImage.save();
+        // credit --
+        await UserModel.findOneAndUpdate(
+            { email },
+            { $inc: { credits: -1 } },
+            { new: true }
+        );
         return res.status(201).json({ message: 'Image saved successfully.', image: newImage });
     } catch (error) {
         console.error('Error saving image:', error);
