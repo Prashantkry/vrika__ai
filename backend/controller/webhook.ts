@@ -121,7 +121,7 @@ export const handleWebhook = async (req: Request, res: Response): Promise<void> 
           updateData = {
             $set: {
               plan: lineItems.data[0].description,
-              credits: 499,
+              credits: 6000,
               customerId: customerId,
               planExpire:expiryDate
             },
