@@ -13,6 +13,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from 'react-redux'
 import store from '../redux/store'
 import ProfilePage from './pages/ProfilePage'
+import SuccessPage from './components/SuccessPage'
+import CancelPage from './components/CancelPage'
 
 function App() {
 
@@ -28,6 +30,8 @@ function App() {
             <Route path="/ContactPage" element={<ContactPage />} />
             <Route path="/SignUp" element={<SignUp />} />
             <Route path="/SignIn" element={<SignIn />} />
+            <Route path="/SuccessPage" element={<SuccessPage />} />
+            <Route path="/CancelPage" element={<CancelPage />} />
 
             <Route path="/TextToImage" element={<TextToImage />} />
           </Route>

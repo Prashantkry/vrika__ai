@@ -14,6 +14,43 @@ interface WebhookEvent {
   };
 }
 
+// ! Function to create a Stripe checkout session
+export const createCheckoutSession = async (req: Request, res: Response) => {
+  console.log("createCheckoutSession triggered");
+  const { email, plan } = req.body;
+  // console.log("email -> ", email, "plan -> ", plan);
+  let priceId:string;
+  if (plan === 'monthly') {
+    priceId = 'price_1Q6ANPSJEnIMxOJps2DlOaHy'; 
+  } else {
+    priceId = 'price_1Q6AQBSJEnIMxOJpjOikgzjW'; 
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: 'subscription',
+      // client_reference_id: email, 
+      customer_email: email,
+      success_url: `${process.env.SUCCESS_URL}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.CANCEL_URL}`,
+    });
+
+    // Respond with the checkout URL to the frontend
+    res.json({ url: session.url });
+  } catch (err) {
+    console.error("Error creating checkout session", err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+// ! Webhook for Stripe
 export const handleWebhook = async (req: Request, res: Response): Promise<void> => {
   console.log("webhook triggered");
 
@@ -28,22 +65,25 @@ export const handleWebhook = async (req: Request, res: Response): Promise<void> 
     case "checkout.session.completed":
       console.log("Checkout Session Completed");
       const checkOutCompleteData = WebhookEvent.data.object;
+      // console.log("checkOutCompleteData -> ", checkOutCompleteData);
       const checkOutCompleteId = checkOutCompleteData.id;
 
-      const client_reference_id = checkOutCompleteData.client_reference_id;
-      console.log("client_reference_id -> ", client_reference_id);
+      // const client_reference_id = checkOutCompleteData.client_reference_id;
+      // console.log("client_reference_id -> ", client_reference_id);
+
+      const customer_email = checkOutCompleteData.customer_email;
 
       const customerId = checkOutCompleteData.customer;
-      console.log("customerId -> ", customerId);
+      // console.log("customerId -> ", customerId);
 
       const subscriptionId = checkOutCompleteData.subscription;
-      console.log("subscriptionId -> ", subscriptionId);
+      // console.log("subscriptionId -> ", subscriptionId);
 
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-      console.log("Subscriptions Details => ", subscription)
+      // console.log("Subscriptions Details => ", subscription)
 
       const lineItems = await stripe.checkout.sessions.listLineItems(checkOutCompleteId);
-      console.log("Line Items => ", lineItems)
+      // console.log("Line Items => ", lineItems)
 
       const client = new MongoClient(uri);
       await client.connect();
@@ -55,8 +95,8 @@ export const handleWebhook = async (req: Request, res: Response): Promise<void> 
 
         const userCollection = client.db("VrikaAI").collection("signUpData");
 
-        const updateFilter = { UserId: client_reference_id };
-        console.log("updateFilter", updateFilter);
+        const updateFilter = { email: customer_email };
+        // console.log("updateFilter", updateFilter);
 
         const iterationPeriod = lineItems.data[0]?.price?.recurring?.interval;
 
@@ -92,7 +132,7 @@ export const handleWebhook = async (req: Request, res: Response): Promise<void> 
 
         if (updateData) {
           const updatedData = await userCollection.updateOne(updateFilter, updateData);
-          console.log("updatedData => ", updatedData);
+          // console.log("updatedData => ", updatedData);
         } else {
           console.log("No update data available.");
         }
