@@ -222,13 +222,28 @@ const ProfilePage = () => {
     }
 
     // ! Open Payment Modal
-    const openPayment = (plan: string) => {
-        if (plan === 'monthly') {
-            window.open('https://buy.stripe.com/test_fZeeW5f2ge6E5EsdQR', '_blank');
-        } else {
-            window.open('https://buy.stripe.com/test_eVa01bg6k4w44Ao144', '_blank');
+    const openPayment = async (plan: string) => {
+        try {
+            const response = await fetch(`${backendAPI}/api/v1/payment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email:storedEmail, plan }), 
+            });
+            
+            const data = await response.json();
+            
+            if (data.url) {
+                window.location.href = data.url; 
+            } else {
+                console.error('No payment URL returned');
+            }
+        } catch (error) {
+            console.error('Error creating checkout session:', error);
         }
-    }
+    };
+    
 
     return (
         <div className="flex flex-col md:flex-row w-full h-screen bg-gradient-to-b from-black to-purple-900 text-white p-3 md:p-5">

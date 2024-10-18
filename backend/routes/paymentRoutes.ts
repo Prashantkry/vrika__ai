@@ -1,8 +1,9 @@
 import express from 'express';
-import { handleWebhook } from '../controller/webhook';
+import { createCheckoutSession, handleWebhook } from '../controller/webhook';
 
 const paymentRoutes = express.Router();
 
-paymentRoutes.post('/', handleWebhook);
+paymentRoutes.post('/', createCheckoutSession);
+paymentRoutes.post('/webhook', handleWebhook);
 
 export default paymentRoutes;

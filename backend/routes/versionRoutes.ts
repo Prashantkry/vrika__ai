@@ -21,6 +21,7 @@ versionRoutes.use("/contact", contactRoutes)
 versionRoutes.use("/ImageStoreDatabase", ImageStoreDatabaseRouter)
 
 versionRoutes.use("/payment", paymentRoutes);
+versionRoutes.use("/subscriptions", paymentRoutes);
 
 versionRoutes.use("/creditsFetch", creditsRoutes)
 
