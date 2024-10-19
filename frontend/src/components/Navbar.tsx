@@ -26,6 +26,7 @@ const Navbar = () => {
     const handleSignOut = () => {
         localStorage.removeItem('user');
         setIsLoggedIn(false);
+        navigate('/');
     };
 
     const handleProtectedRoute = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {

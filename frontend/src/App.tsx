@@ -15,6 +15,7 @@ import store from '../redux/store'
 import ProfilePage from './pages/ProfilePage'
 import SuccessPage from './components/SuccessPage'
 import CancelPage from './components/CancelPage'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
 
@@ -33,10 +34,19 @@ function App() {
             <Route path="/SuccessPage" element={<SuccessPage />} />
             <Route path="/CancelPage" element={<CancelPage />} />
 
-            <Route path="/TextToImage" element={<TextToImage />} />
+            <Route path="/TextToImage" element={
+              <ProtectedRoute>
+                <TextToImage />
+              </ProtectedRoute>
+            } />
+            <Route path="/ProfilePage" element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            } />
           </Route>
         </Routes>
-      </Provider>
+      </Provider >
     </>
   )
 }
