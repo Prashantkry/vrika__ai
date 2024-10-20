@@ -30,8 +30,11 @@ const HomePage: React.FC = () => {
         <h1 className="text-6xl md:text-7xl font-extrabold mb-6 text-shadow-lg tracking-tight leading-tight">
           Create Stunning AI Art with Vrika AI
         </h1>
+        <p className="text-lg md:text-xl text-gray-300 mb-3 max-w-3xl mx-auto">
+          Discover the endless possibilities of AI-generated images, and creative assets. Transform your imagination into visual masterpieces effortlessly.
+        </p>
         <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
-          Discover the endless possibilities of AI-generated images, videos, and creative assets. Transform your imagination into visual masterpieces effortlessly.
+          Summarize your bigger paragraph.
         </p>
 
         <div className="flex justify-center mb-14">
