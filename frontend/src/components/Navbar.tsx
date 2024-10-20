@@ -67,6 +67,15 @@ const Navbar = () => {
                         </Link>
 
                         <Link
+                            to="/TextToText"
+                            onClick={(e) => handleProtectedRoute(e, '/TextToText')}
+                            className={`relative transition duration-300 ${isActive('/TextToText') ? 'text-indigo-500' : 'hover:text-indigo-400 group'}`}
+                        >
+                            Summarize Text
+                            {isActive('/TextToText') && <span className="absolute left-0 bottom-0 w-full h-[2px] bg-indigo-500"></span>}
+                        </Link>
+
+                        <Link
                             to="/ProfilePage"
                             onClick={(e) => handleProtectedRoute(e, '/ProfilePage')}
                             className={`relative transition duration-300 ${isActive('/ProfilePage') ? 'text-indigo-500' : 'hover:text-indigo-400 group'}`}
@@ -141,6 +150,14 @@ const Navbar = () => {
                             className={`block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 hover:text-white ${isActive('/TextToImage') ? 'bg-gray-800 text-white' : ''}`}
                         >
                             Generate Images
+                        </Link>
+
+                        <Link
+                            to="/TextToText"
+                            onClick={(e) => handleProtectedRoute(e, '/TextToText')}
+                            className={`block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 hover:text-white ${isActive('/TextToText') ? 'bg-gray-800 text-white' : ''}`}
+                        >
+                            Summarize Text
                         </Link>
 
                         <Link

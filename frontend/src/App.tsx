@@ -16,6 +16,7 @@ import ProfilePage from './pages/ProfilePage'
 import SuccessPage from './components/SuccessPage'
 import CancelPage from './components/CancelPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import Summarizer from './pages/Summarizer'
 
 function App() {
 
@@ -39,6 +40,13 @@ function App() {
                 <TextToImage />
               </ProtectedRoute>
             } />
+
+            <Route path="/TextToText" element={
+              <ProtectedRoute>
+                <Summarizer />
+              </ProtectedRoute>
+            } />
+
             <Route path="/ProfilePage" element={
               <ProtectedRoute>
                 <ProfilePage />

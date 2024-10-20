@@ -5,6 +5,7 @@ import GenerateArtRouter from './GenerateArtroutes'
 import ImageStoreDatabaseRouter from './ImageStoreDatabase'
 import paymentRoutes from './paymentRoutes'
 import creditsRoutes from './creditsRoutes'
+import summarizerRouter from './summrizerRoutes'
 
 const versionRoutes = express.Router()
 
@@ -24,5 +25,7 @@ versionRoutes.use("/payment", paymentRoutes);
 versionRoutes.use("/subscriptions", paymentRoutes);
 
 versionRoutes.use("/creditsFetch", creditsRoutes)
+
+versionRoutes.use("/summarizeText", summarizerRouter)
 
 export default versionRoutes
